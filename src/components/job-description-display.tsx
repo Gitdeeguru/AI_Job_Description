@@ -1,11 +1,12 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import jsPDF from 'jspdf';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Copy, RefreshCw, FileText } from 'lucide-react';
+import { Copy, RefreshCw, FileText, Download } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast"
 
 interface JobDescriptionDisplayProps {
@@ -27,6 +28,20 @@ export function JobDescriptionDisplay({ jobDescription, isLoading, onRegenerate 
     }
   };
 
+  const handleDownload = () => {
+    if (jobDescription) {
+      const doc = new jsPDF();
+      doc.text(jobDescription, 10, 10, {
+        maxWidth: 190
+      });
+      doc.save('job-description.pdf');
+      toast({
+        title: "Downloading PDF",
+        description: "Your job description is being downloaded.",
+      })
+    }
+  }
+
   const formattedDescription = jobDescription
     ?.split('\n')
     .filter(p => p.trim() !== '')
@@ -41,6 +56,11 @@ export function JobDescriptionDisplay({ jobDescription, isLoading, onRegenerate 
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button variant="ghost" size="icon" onClick={handleCopy} aria-label="Copy">
                 <Copy className="h-5 w-5 text-accent" />
+              </Button>
+            </motion.div>
+             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Button variant="ghost" size="icon" onClick={handleDownload} aria-label="Download PDF">
+                <Download className="h-5 w-5 text-accent" />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
