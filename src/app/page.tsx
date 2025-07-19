@@ -1,3 +1,81 @@
+'use client';
+
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Header } from '@/components/header';
+import { JobDescriptionForm } from '@/components/job-description-form';
+import { JobDescriptionDisplay } from '@/components/job-description-display';
+import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-description';
+import { generateJobDescription, regenerateJobDescription } from '@/app/actions';
+import { useToast } from '@/hooks/use-toast';
+
 export default function Home() {
-  return <></>;
+  const [jobDescription, setJobDescription] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [formInput, setFormInput] = useState<GenerateJobDescriptionInput | null>(null);
+  const { toast } = useToast();
+
+  const handleGenerate = async (data: GenerateJobDescriptionInput) => {
+    setIsLoading(true);
+    setJobDescription(null);
+    setFormInput(data);
+    try {
+      const result = await generateJobDescription(data);
+      setJobDescription(result.jobDescription);
+    } catch (error) {
+      console.error('Error generating job description:', error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with generating the job description.",
+      })
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegenerate = async () => {
+    if (!formInput || !jobDescription) return;
+    setIsLoading(true);
+    setJobDescription(null);
+    try {
+      const result = await regenerateJobDescription({
+        ...formInput,
+        originalDescription: jobDescription,
+      });
+      setJobDescription(result.jobDescription);
+    } catch (error) {
+      console.error('Error regenerating job description:', error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with regenerating the job description.",
+      })
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header />
+      <main className="flex-1 container mx-auto p-4 md:p-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"
+        >
+          <JobDescriptionForm onSubmit={handleGenerate} isLoading={isLoading} />
+          <div className="h-full">
+            <JobDescriptionDisplay
+              jobDescription={jobDescription}
+              isLoading={isLoading}
+              onRegenerate={handleRegenerate}
+            />
+          </div>
+        </motion.div>
+      </main>
+    </div>
+  );
 }
