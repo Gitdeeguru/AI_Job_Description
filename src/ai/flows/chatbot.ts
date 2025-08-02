@@ -7,7 +7,8 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { ChatInput, ChatOutput, ChatInputSchema, ChatOutputSchema } from '@/lib/types';
+import { ChatInput, ChatOutput, ChatInputSchema, ChatOutputSchema, ChatMessageSchema } from '@/lib/types';
+import { z } from 'zod';
 
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
@@ -41,10 +42,15 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async (input) => {
+    const history = input.history ?? [];
+
     const { response } = await ai.generate({
       prompt: input.message,
-      history: input.history,
-      system: systemPrompt
+      history: history,
+      system: systemPrompt,
+      output: {
+        schema: z.string(),
+      }
     });
 
     return { response: response.text };
