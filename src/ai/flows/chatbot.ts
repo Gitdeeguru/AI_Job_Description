@@ -39,13 +39,9 @@ const chatPrompt = ai.definePrompt({
   input: { schema: ChatInputSchema },
   output: { schema: z.string() },
   system: systemPrompt,
-  prompt: `{{#each history}}
-{{#if (eq this.role 'user')}}
-User: {{{this.content}}}
-{{else}}
-Model: {{{this.content}}}
-{{/if}}
-{{/each}}
+  prompt: `{{#each history}}{{#if (lookup this 'role' 'user')}}User: {{this.content}}
+{{else}}Model: {{this.content}}
+{{/if}}{{/each}}
 User: {{{message}}}
 Model: `,
 });
