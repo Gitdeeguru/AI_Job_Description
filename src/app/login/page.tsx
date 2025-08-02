@@ -108,6 +108,7 @@ export default function AuthPage() {
   const [isLoginView, setIsLoginView] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [captchaCode, setCaptchaCode] = useState('');
   const { login, signup, user } = useAuth();
   const router = useRouter();
@@ -172,9 +173,11 @@ export default function AuthPage() {
   const toggleView = () => {
     setIsLoginView(!isLoginView);
     setShowPassword(false);
+    setShowConfirmPassword(false);
   };
   
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
   const formVariants = {
     hidden: { opacity: 0, x: -50 },
@@ -359,9 +362,9 @@ export default function AuthPage() {
                               <FormLabel>Confirm Password</FormLabel>
                               <FormControl>
                                 <div className="relative">
-                                  <Input type={showPassword ? "text" : "password"} placeholder="********" {...field} suppressHydrationWarning />
-                                   <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={togglePasswordVisibility} suppressHydrationWarning>
-                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  <Input type={showConfirmPassword ? "text" : "password"} placeholder="********" {...field} suppressHydrationWarning />
+                                   <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={toggleConfirmPasswordVisibility} suppressHydrationWarning>
+                                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                   </Button>
                                 </div>
                               </FormControl>
