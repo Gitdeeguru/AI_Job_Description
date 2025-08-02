@@ -7,7 +7,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { ChatInput, ChatOutput, ChatInputSchema, ChatOutputSchema } from '@/lib/types';
+import { ChatInput, ChatOutput, ChatInputSchema, ChatOutputSchema, ChatMessage } from '@/lib/types';
 import { z } from 'zod';
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
@@ -39,11 +39,10 @@ const chatPrompt = ai.definePrompt({
   input: { schema: ChatInputSchema },
   output: { schema: z.string() },
   system: systemPrompt,
-  prompt: `{{#each history}}{{#if (eq this.role 'user')}}User: {{this.content}}
-{{else}}Model: {{this.content}}
-{{/if}}{{/each}}
-User: {{{message}}}
-Model: `,
+  prompt: `{{#each history}}{{this.role}}: {{this.content}}
+{{/each}}
+user: {{{message}}}
+model: `,
 });
 
 
@@ -58,7 +57,3 @@ const chatFlow = ai.defineFlow(
     return { response: output || 'Sorry, I could not generate a response.' };
   }
 );
-
-function eq(a: string, b: string) {
-  return a === b;
-}
