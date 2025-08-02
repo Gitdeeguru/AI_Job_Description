@@ -67,13 +67,16 @@
   }
 }
 
-/* react-quill overrides */
-.ql-toolbar {
-  @apply rounded-t-lg border-input;
-}
-.ql-container {
-  @apply rounded-b-lg border-input;
-}
-.ql-editor {
+/* Tiptap editor styles */
+.tiptap {
+  @apply rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
   min-height: 150px;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: hsl(var(--muted-foreground));
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
