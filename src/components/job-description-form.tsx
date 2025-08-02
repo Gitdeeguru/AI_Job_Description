@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-description';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 const formSchema = z.object({
   roleTitle: z.string().min(2, { message: 'Role title must be at least 2 characters.' }),
@@ -26,6 +27,9 @@ const formSchema = z.object({
   experience: z.string().min(1, { message: 'Experience is required.' }),
   location: z.string().min(2, { message: 'Location is required.' }),
   keySkills: z.string().min(2, { message: 'At least one skill is required.' }),
+  gender: z.enum(['male', 'female', 'both'], {
+    required_error: "You need to select a gender preference.",
+  }),
 });
 
 interface JobDescriptionFormProps {
@@ -43,6 +47,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
       keySkills: '',
       companyName: '',
       aboutCompany: '',
+      gender: 'both',
     },
   });
 
@@ -143,6 +148,48 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                         {...field}
                         suppressHydrationWarning
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Gender Preference</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="male" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Male
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="female" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Female
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="both" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Both
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

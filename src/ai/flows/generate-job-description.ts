@@ -18,6 +18,7 @@ const GenerateJobDescriptionInputSchema = z.object({
   keySkills: z.string().describe('A comma-separated list of key skills required for the job (e.g., React, Node.js).'),
   companyName: z.string().describe('The name of the company.'),
   aboutCompany: z.string().describe('A brief description of the company.'),
+  gender: z.string().describe('The gender preference for the role (male, female, or both).'),
 });
 export type GenerateJobDescriptionInput = z.infer<typeof GenerateJobDescriptionInputSchema>;
 
@@ -44,6 +45,7 @@ Role Title: {{{roleTitle}}}
 Experience: {{{experience}}}
 Location: {{{location}}}
 Key Skills: {{{keySkills}}}
+Gender Preference: {{{gender}}}
 
 Job Description (in point format):`,
 });

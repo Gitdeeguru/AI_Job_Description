@@ -11,6 +11,7 @@ const RegenerateJobDescriptionInputSchema = z.object({
   companyName: z.string().describe('The name of the company.'),
   aboutCompany: z.string().describe('A brief description of the company.'),
   originalDescription: z.string().describe('The original job description to regenerate with variations.'),
+  gender: z.string().describe('The gender preference for the role (male, female, or both).'),
 });
 export type RegenerateJobDescriptionInput = z.infer<typeof RegenerateJobDescriptionInputSchema>;
 
@@ -39,6 +40,7 @@ Role Title: {{{roleTitle}}}
 Experience: {{{experience}}}
 Location: {{{location}}}
 Key Skills: {{{keySkills}}}
+Gender Preference: {{{gender}}}
 
 Regenerated Job Description:`, 
 });
