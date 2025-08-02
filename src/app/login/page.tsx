@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const captchaSchema = z.object({
@@ -43,12 +43,65 @@ const signupSchema = signupFormSchema.merge(captchaSchema).refine(data => data.p
   path: ['confirmPassword'],
 });
 
+const generateCaptchaCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let captcha = '';
+    for (let i = 0; i < 6; i++) {
+        captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return captcha;
+};
+
+const CaptchaImage = ({ captchaCode }: { captchaCode: string }) => {
+  if (typeof window === 'undefined') {
+    return <div className="h-[50px] w-full bg-muted rounded-md" />;
+  }
+
+  const getPath = () => {
+    let path = `M10 25`;
+    let currentX = 10;
+    for (let i = 0; i < captchaCode.length; i++) {
+      const y = 25 + (Math.random() - 0.5) * 10;
+      const controlX1 = currentX + 10;
+      const controlY1 = 25 + (Math.random() - 0.5) * 20;
+      const controlX2 = currentX + 10;
+      const controlY2 = 25 + (Math.random() - 0.5) * 20;
+      const endX = currentX + 20;
+      currentX = endX;
+      path += ` C${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${y}`;
+    }
+    return path;
+  };
+
+  return (
+    <svg width="150" height="50" className="bg-muted rounded-md border border-input">
+      <path id="captchaPath" d={getPath()} stroke="none" fill="none" />
+      <text fill="#333" fontSize="24" fontWeight="bold" letterSpacing="2">
+        <textPath href="#captchaPath" startOffset="0%">
+          {captchaCode}
+        </textPath>
+      </text>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <line
+          key={i}
+          x1={Math.random() * 150}
+          y1={Math.random() * 50}
+          x2={Math.random() * 150}
+          y2={Math.random() * 50}
+          strokeWidth="1"
+          stroke="#ccc"
+        />
+      ))}
+    </svg>
+  );
+};
+
 
 export default function AuthPage() {
   const [isLoginView, setIsLoginView] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [captcha, setCaptcha] = useState({ num1: 0, num2: 0, answer: 0 });
+  const [captchaCode, setCaptchaCode] = useState('');
   const { login, signup, user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -59,15 +112,13 @@ export default function AuthPage() {
     }
   }, [user, router]);
 
-  const generateCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
-    setCaptcha({ num1, num2, answer: num1 + num2 });
-  };
+  const generateNewCaptcha = useCallback(() => {
+    setCaptchaCode(generateCaptchaCode());
+  }, []);
   
   useEffect(() => {
-    generateCaptcha();
-  }, [isLoginView]);
+    generateNewCaptcha();
+  }, [isLoginView, generateNewCaptcha]);
 
   const formSchema = useMemo(() => isLoginView ? loginSchema : signupSchema, [isLoginView]);
   
@@ -84,18 +135,18 @@ export default function AuthPage() {
 
   useEffect(() => {
     form.reset(defaultValues);
-    generateCaptcha();
-  }, [isLoginView, form, defaultValues]);
+    generateNewCaptcha();
+  }, [isLoginView, form, defaultValues, generateNewCaptcha]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (parseInt(data.captcha, 10) !== captcha.answer) {
+    if (data.captcha.toLowerCase() !== captchaCode.toLowerCase()) {
       toast({
         variant: "destructive",
         title: "CAPTCHA Failed",
-        description: "Please solve the math problem correctly.",
+        description: "The characters you entered do not match.",
       });
       form.setValue('captcha', '');
-      generateCaptcha();
+      generateNewCaptcha();
       return;
     }
 
@@ -108,7 +159,7 @@ export default function AuthPage() {
       await signup(signupData.email, signupData.name, signupData.password);
     }
     setIsSubmitting(false);
-    generateCaptcha();
+    generateNewCaptcha();
   };
 
   const toggleView = () => {
@@ -206,15 +257,21 @@ export default function AuthPage() {
                             </FormItem>
                           )}
                         />
-                        <FormField
+                         <FormField
                           control={form.control}
                           name="captcha"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Verify you are human: {`${captcha.num1} + ${captcha.num2} = ?`}</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Your answer" {...field} suppressHydrationWarning type="number" />
-                              </FormControl>
+                              <FormLabel>Verify you are human</FormLabel>
+                              <div className="flex items-center gap-2">
+                                <FormControl>
+                                  <Input placeholder="Enter CAPTCHA" {...field} suppressHydrationWarning />
+                                </FormControl>
+                                <CaptchaImage captchaCode={captchaCode} />
+                                <Button type="button" variant="ghost" size="icon" onClick={generateNewCaptcha}>
+                                  <RefreshCw className="h-4 w-4" />
+                                </Button>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -307,10 +364,16 @@ export default function AuthPage() {
                           name="captcha"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Verify you are human: {`${captcha.num1} + ${captcha.num2} = ?`}</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Your answer" {...field} suppressHydrationWarning type="number" />
-                              </FormControl>
+                              <FormLabel>Verify you are human</FormLabel>
+                              <div className="flex items-center gap-2">
+                                <FormControl>
+                                  <Input placeholder="Enter CAPTCHA" {...field} suppressHydrationWarning />
+                                </FormControl>
+                                <CaptchaImage captchaCode={captchaCode} />
+                                <Button type="button" variant="ghost" size="icon" onClick={generateNewCaptcha}>
+                                  <RefreshCw className="h-4 w-4" />
+                                </Button>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}
