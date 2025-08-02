@@ -30,7 +30,7 @@ const regenerateJobDescriptionPrompt = ai.definePrompt({
   output: {schema: RegenerateJobDescriptionOutputSchema},
   prompt: `You are an expert HR assistant, skilled at writing job descriptions.
 
-You are provided with an existing job description, and your job is to rewrite it with slight variations in phrasing.  Do not change the meaning of the job description, but rephrase it to provide some variety to the user.
+You are provided with an existing job description, and your job is to rewrite it with slight variations in phrasing. Do not change the meaning of the job description, but rephrase it to provide some variety to the user. The output should be a single string. Use markdown-style headings (e.g., "## About the Company") for sections and bullet points (e.g., "- item") for lists under "Key Responsibilities" and "Qualifications".
 
 Original Job Description: {{{originalDescription}}}
 

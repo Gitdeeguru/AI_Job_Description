@@ -23,7 +23,7 @@ const GenerateJobDescriptionInputSchema = z.object({
 export type GenerateJobDescriptionInput = z.infer<typeof GenerateJobDescriptionInputSchema>;
 
 const GenerateJobDescriptionOutputSchema = z.object({
-  jobDescription: z.string().describe('The generated job description.'),
+  jobDescription: z.string().describe('The generated job description as a single formatted string.'),
 });
 export type GenerateJobDescriptionOutput = z.infer<typeof GenerateJobDescriptionOutputSchema>;
 
@@ -37,7 +37,9 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateJobDescriptionOutputSchema},
   prompt: `You are an expert HR assistant specializing in writing job descriptions.
 
-You will use the information provided to generate a compelling job description for the role. Please structure the output with clear sections like "About the Company", "Key Responsibilities", and "Qualifications". Use bullet points for lists.
+Generate a compelling job description based on the details provided.
+
+The output should be a single string. Use markdown-style headings (e.g., "## About the Company") for sections and bullet points (e.g., "- item") for lists under "Key Responsibilities" and "Qualifications".
 
 Company Name: {{{companyName}}}
 About Company: {{{aboutCompany}}}
@@ -47,7 +49,7 @@ Location: {{{location}}}
 Key Skills: {{{keySkills}}}
 Gender Preference: {{{gender}}}
 
-Job Description (in point format):`,
+Job Description:`,
 });
 
 const generateJobDescriptionFlow = ai.defineFlow(

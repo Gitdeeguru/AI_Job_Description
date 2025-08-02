@@ -42,10 +42,25 @@ export function JobDescriptionDisplay({ jobDescription, isLoading, onRegenerate 
     }
   }
 
-  const formattedDescription = jobDescription
-    ?.split('\n')
-    .filter(p => p.trim() !== '')
-    .map((paragraph, index) => <p key={index}>{paragraph}</p>);
+  const renderFormattedDescription = () => {
+    if (!jobDescription) return null;
+
+    const lines = jobDescription.split('\\n');
+
+    return lines.map((line, index) => {
+      line = line.trim();
+      if (line.startsWith('## ')) {
+        return <h2 key={index} className="text-xl font-headline mt-4 mb-2 text-primary">{line.substring(3)}</h2>;
+      }
+      if (line.startsWith('- ')) {
+        return <li key={index} className="ml-4 list-disc">{line.substring(2)}</li>;
+      }
+      if (line) {
+        return <p key={index} className="my-2">{line}</p>;
+      }
+      return null;
+    });
+  };
 
   return (
     <Card className="bg-card/50 border-primary/20 shadow-lg h-full backdrop-blur-md">
@@ -99,9 +114,9 @@ export function JobDescriptionDisplay({ jobDescription, isLoading, onRegenerate 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="text-sm text-foreground space-y-4"
+                className="text-sm text-foreground space-y-2"
               >
-                {formattedDescription}
+                {renderFormattedDescription()}
               </motion.div>
             )}
 
