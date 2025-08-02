@@ -8,14 +8,11 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { LoginForm, LoginFormData } from '@/components/login-form';
 import { SignupForm, SignupFormData } from '@/components/signup-form';
-import { OtpForm, OtpFormData } from '@/components/otp-form';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AuthPage() {
-  const [view, setView] = useState<'login' | 'signup' | 'otp'>('login');
+  const [view, setView] = useState<'login' | 'signup'>('login');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [signupData, setSignupData] = useState<SignupFormData | null>(null);
-  const [otp, setOtp] = useState<string | null>(null);
   
   const { login, signup, user } = useAuth();
   const router = useRouter();
@@ -34,36 +31,12 @@ export default function AuthPage() {
   
   const handleSignupSubmit = async (data: SignupFormData) => {
     setIsSubmitting(true);
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    setOtp(generatedOtp);
-    setSignupData(data);
-    
-    // Simulate sending OTP
-    toast({
-      title: 'Verification Code',
-      description: `Your OTP is: ${generatedOtp}`,
-    });
-
-    setView('otp');
-    setIsSubmitting(false);
-  };
-
-  const handleOtpSubmit = async (data: OtpFormData) => {
-    setIsSubmitting(true);
-    if (data.otp === otp && signupData) {
-      const success = await signup(signupData.email, signupData.name, signupData.password);
-      if (success) {
+    const success = await signup(data.email, data.name, data.password);
+    if (success) {
         toast({
             title: "Success!",
             description: "Your account has been created and verified.",
         });
-      }
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Invalid OTP",
-        description: "The OTP you entered is incorrect. Please try again.",
-      });
     }
     setIsSubmitting(false);
   };
@@ -129,14 +102,6 @@ export default function AuthPage() {
                   onSubmit={handleSignupSubmit}
                   onSwitchToLogin={() => setView('login')}
                  />
-              )}
-              {view === 'otp' && signupData && (
-                <OtpForm
-                  email={signupData.email}
-                  isSubmitting={isSubmitting}
-                  onSubmit={handleOtpSubmit}
-                  onBack={() => setView('signup')}
-                />
               )}
             </motion.div>
           </AnimatePresence>
