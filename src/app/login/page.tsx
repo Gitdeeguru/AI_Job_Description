@@ -53,47 +53,54 @@ const generateCaptchaCode = () => {
 };
 
 const CaptchaImage = ({ captchaCode }: { captchaCode: string }) => {
-  if (typeof window === 'undefined') {
-    return <div className="h-[50px] w-full bg-muted rounded-md" />;
+  const [svg, setSvg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getPath = () => {
+      let path = `M10 25`;
+      let currentX = 10;
+      for (let i = 0; i < captchaCode.length; i++) {
+        const y = 25 + (Math.random() - 0.5) * 10;
+        const controlX1 = currentX + 10;
+        const controlY1 = 25 + (Math.random() - 0.5) * 20;
+        const controlX2 = currentX + 10;
+        const controlY2 = 25 + (Math.random() - 0.5) * 20;
+        const endX = currentX + 20;
+        currentX = endX;
+        path += ` C${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${y}`;
+      }
+      return path;
+    };
+    
+    const lines = Array.from({ length: 5 }).map((_, i) => (
+      `<line
+        key=${i}
+        x1=${Math.random() * 150}
+        y1=${Math.random() * 50}
+        x2=${Math.random() * 150}
+        y2=${Math.random() * 50}
+        stroke-width="1"
+        stroke="#ccc"
+      />`
+    )).join('');
+
+    const generatedSvg = `
+      <svg width="150" height="50" class="bg-muted rounded-md border border-input">
+        <path id="captchaPath" d="${getPath()}" stroke="none" fill="none" />
+        <text fill="#333" font-size="24" font-weight="bold" letter-spacing="2">
+          <textPath href="#captchaPath" startOffset="0%">${captchaCode}</textPath>
+        </text>
+        ${lines}
+      </svg>
+    `;
+    setSvg(generatedSvg);
+  }, [captchaCode]);
+
+  if (!svg) {
+    return <div className="h-[50px] w-[150px] bg-muted rounded-md border border-input" />;
   }
 
-  const getPath = () => {
-    let path = `M10 25`;
-    let currentX = 10;
-    for (let i = 0; i < captchaCode.length; i++) {
-      const y = 25 + (Math.random() - 0.5) * 10;
-      const controlX1 = currentX + 10;
-      const controlY1 = 25 + (Math.random() - 0.5) * 20;
-      const controlX2 = currentX + 10;
-      const controlY2 = 25 + (Math.random() - 0.5) * 20;
-      const endX = currentX + 20;
-      currentX = endX;
-      path += ` C${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${y}`;
-    }
-    return path;
-  };
-
-  return (
-    <svg width="150" height="50" className="bg-muted rounded-md border border-input">
-      <path id="captchaPath" d={getPath()} stroke="none" fill="none" />
-      <text fill="#333" fontSize="24" fontWeight="bold" letterSpacing="2">
-        <textPath href="#captchaPath" startOffset="0%">
-          {captchaCode}
-        </textPath>
-      </text>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <line
-          key={i}
-          x1={Math.random() * 150}
-          y1={Math.random() * 50}
-          x2={Math.random() * 150}
-          y2={Math.random() * 50}
-          strokeWidth="1"
-          stroke="#ccc"
-        />
-      ))}
-    </svg>
-  );
+  return <div dangerouslySetInnerHTML={{ __html: svg }} />;
 };
 
 
@@ -267,7 +274,7 @@ export default function AuthPage() {
                                 <FormControl>
                                   <Input placeholder="Enter CAPTCHA" {...field} suppressHydrationWarning />
                                 </FormControl>
-                                <CaptchaImage captchaCode={captchaCode} />
+                                {captchaCode && <CaptchaImage captchaCode={captchaCode} />}
                                 <Button type="button" variant="ghost" size="icon" onClick={generateNewCaptcha}>
                                   <RefreshCw className="h-4 w-4" />
                                 </Button>
@@ -369,7 +376,7 @@ export default function AuthPage() {
                                 <FormControl>
                                   <Input placeholder="Enter CAPTCHA" {...field} suppressHydrationWarning />
                                 </FormControl>
-                                <CaptchaImage captchaCode={captchaCode} />
+                                {captchaCode && <CaptchaImage captchaCode={captchaCode} />}
                                 <Button type="button" variant="ghost" size="icon" onClick={generateNewCaptcha}>
                                   <RefreshCw className="h-4 w-4" />
                                 </Button>
