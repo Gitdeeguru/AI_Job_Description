@@ -114,7 +114,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                 )}
               />
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary/90">
+                <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary/90" suppressHydrationWarning>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
