@@ -132,7 +132,7 @@ export default function AuthPage() {
                         </motion.div>
                          <p className="text-center text-sm text-muted-foreground">
                           Don&apos;t have an account?{' '}
-                          <Button variant="link" type="button" onClick={toggleView} className="p-0 h-auto">
+                          <Button variant="link" type="button" onClick={toggleView} className="p-0 h-auto" suppressHydrationWarning>
                             Sign up
                           </Button>
                         </p>
@@ -156,7 +156,7 @@ export default function AuthPage() {
                             <FormItem>
                               <FormLabel>Name</FormLabel>
                               <FormControl>
-                                <Input placeholder="Your Name" {...field} />
+                                <Input placeholder="Your Name" {...field} suppressHydrationWarning />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -169,7 +169,7 @@ export default function AuthPage() {
                             <FormItem>
                               <FormLabel>Email</FormLabel>
                               <FormControl>
-                                <Input placeholder="you@company.com" {...field} />
+                                <Input placeholder="you@company.com" {...field} suppressHydrationWarning />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -182,20 +182,20 @@ export default function AuthPage() {
                             <FormItem>
                               <FormLabel>Password</FormLabel>
                               <FormControl>
-                                <Input type="password" placeholder="********" {...field} />
+                                <Input type="password" placeholder="********" {...field} suppressHydrationWarning />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
                         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                          <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                          <Button type="submit" className="w-full bg-primary hover:bg-primary/90" suppressHydrationWarning>
                             Sign Up
                           </Button>
                         </motion.div>
                         <p className="text-center text-sm text-muted-foreground">
                           Already have an account?{' '}
-                          <Button variant="link" type="button" onClick={toggleView} className="p-0 h-auto">
+                          <Button variant="link" type="button" onClick={toggleView} className="p-0 h-auto" suppressHydrationWarning>
                             Login
                           </Button>
                         </p>
