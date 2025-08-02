@@ -12,13 +12,13 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AnalyzeJobDescriptionInputSchema = z.object({
-  jobDescription: z.string().describe('The job description text to analyze.'),
+  jobDescription: z.string().describe('The job description text to analyze, can be in HTML or markdown format.'),
 });
 export type AnalyzeJobDescriptionInput = z.infer<typeof AnalyzeJobDescriptionInputSchema>;
 
 const AnalyzeJobDescriptionOutputSchema = z.object({
-  structuredContent: z.string().describe('The job description converted into well-structured markdown with bullet points.'),
-  recommendations: z.string().describe('AI-generated recommendations to improve the job description.'),
+  structuredContent: z.string().describe('The job description converted into well-structured HTML. Use headings (e.g., "<h2>Key Responsibilities</h2>") and bullet points (e.g., "<ul><li>item</li></ul>") for lists. Ensure the output is a single formatted string.'),
+  recommendations: z.string().describe('AI-generated recommendations to improve the job description, formatted as an HTML string.'),
 });
 export type AnalyzeJobDescriptionOutput = z.infer<typeof AnalyzeJobDescriptionOutputSchema>;
 
@@ -39,8 +39,8 @@ Analyze the following job description:
 
 Based on your analysis, provide the following:
 
-1.  **structuredContent**: Convert the original job description into a well-structured document using markdown. Use headings (e.g., "## Key Responsibilities") and bullet points for lists. Ensure the output is a single formatted string.
-2.  **recommendations**: Provide actionable recommendations to enhance the quality of the job description. Focus on clarity, inclusivity, and impact.
+1.  **structuredContent**: Convert the original job description into a well-structured document using HTML. Use headings (e.g., "<h2>Key Responsibilities</h2>") and bullet points (e.g., "<ul><li>item</li></ul>") for lists. Ensure the output is a single formatted string.
+2.  **recommendations**: Provide actionable recommendations to enhance the quality of the job description. Focus on clarity, inclusivity, and impact. Format the output as an HTML string with lists.
 `,
 });
 

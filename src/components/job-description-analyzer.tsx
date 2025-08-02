@@ -14,13 +14,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, Wand2 } from 'lucide-react';
 import { analyzeJobDescription } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
+import { RichTextEditor } from './rich-text-editor';
 
 const formSchema = z.object({
   jobDescription: z.string().min(50, { message: 'Job description must be at least 50 characters.' }),
@@ -105,9 +105,8 @@ export function JobDescriptionAnalyzer() {
                   <FormItem>
                     <FormLabel>Job Description Content</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <RichTextEditor
                         placeholder="Paste the full job description here..."
-                        className="resize-y min-h-[300px]"
                         {...field}
                       />
                     </FormControl>
@@ -157,15 +156,13 @@ export function JobDescriptionAnalyzer() {
               <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="space-y-6">
                 <div>
                   <h3 className="text-lg font-semibold text-accent mb-2">Restructured Description</h3>
-                  <div className="text-sm text-foreground space-y-2 prose">
-                    {renderFormattedText(analysis.structuredContent)}
+                  <div className="text-sm text-foreground space-y-2 prose" dangerouslySetInnerHTML={{ __html: analysis.structuredContent }}>
                   </div>
                 </div>
                 <Separator />
                  <div>
                   <h3 className="text-lg font-semibold text-accent mb-2">AI Recommendations</h3>
-                   <div className="text-sm text-foreground space-y-2 prose">
-                    {renderFormattedText(analysis.recommendations)}
+                   <div className="text-sm text-foreground space-y-2 prose" dangerouslySetInnerHTML={{ __html: analysis.recommendations }}>
                   </div>
                 </div>
               </motion.div>

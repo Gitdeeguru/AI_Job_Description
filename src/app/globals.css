@@ -66,3 +66,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* react-quill overrides */
+.ql-toolbar {
+  @apply rounded-t-lg border-input;
+}
+.ql-container {
+  @apply rounded-b-lg border-input;
+}
+.ql-editor {
+  min-height: 150px;
+}
