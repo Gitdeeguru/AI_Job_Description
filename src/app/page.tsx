@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { Header } from '@/components/header';
 import { JobDescriptionForm } from '@/components/job-description-form';
 import { JobDescriptionDisplay } from '@/components/job-description-display';
+import { JobDescriptionAnalyzer } from '@/components/job-description-analyzer';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-description';
 import { generateJobDescription, regenerateJobDescription } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
@@ -60,21 +62,32 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <main className="flex-1 container mx-auto p-4 md:p-8">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"
-        >
-          <JobDescriptionForm onSubmit={handleGenerate} isLoading={isLoading} />
-          <div className="h-full">
-            <JobDescriptionDisplay
-              jobDescription={jobDescription}
-              isLoading={isLoading}
-              onRegenerate={handleRegenerate}
-            />
-          </div>
-        </motion.div>
+        <Tabs defaultValue="generate">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="generate">Generate JD</TabsTrigger>
+            <TabsTrigger value="analyze">Analyze JD</TabsTrigger>
+          </TabsList>
+          <TabsContent value="generate">
+             <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mt-4"
+            >
+              <JobDescriptionForm onSubmit={handleGenerate} isLoading={isLoading} />
+              <div className="h-full">
+                <JobDescriptionDisplay
+                  jobDescription={jobDescription}
+                  isLoading={isLoading}
+                  onRegenerate={handleRegenerate}
+                />
+              </div>
+            </motion.div>
+          </TabsContent>
+          <TabsContent value="analyze">
+            <JobDescriptionAnalyzer />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
