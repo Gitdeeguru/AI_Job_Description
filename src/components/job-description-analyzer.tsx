@@ -62,18 +62,26 @@ export function JobDescriptionAnalyzer() {
   };
 
   const renderFormattedText = (text: string) => {
-    const lines = text.split('\\n').filter(line => line.trim() !== '');
+    // Replace escaped newlines and then split by newline
+    const lines = text.replace(/\\n/g, '\n').split('\n').filter(line => line.trim() !== '');
+
     return lines.map((line, index) => {
-      line = line.trim();
-      if (line.startsWith('## ')) {
-        return <h2 key={index} className="text-xl font-headline mt-4 mb-2 text-primary">{line.substring(3)}</h2>;
-      }
-      if (line.startsWith('- ')) {
-        return <li key={index} className="ml-4 list-disc">{line.substring(2)}</li>;
-      }
-      return <p key={index} className="my-2">{line}</p>;
+        line = line.trim();
+        // Match headings like ## Title
+        if (line.match(/^##\s/)) {
+            return <h2 key={index} className="text-xl font-headline mt-4 mb-2 text-primary">{line.substring(line.indexOf(' ') + 1)}</h2>;
+        }
+        // Match bullet points like - item or * item
+        if (line.match(/^[-*]\s/)) {
+            return <li key={index} className="ml-4 list-disc">{line.substring(line.indexOf(' ') + 1)}</li>;
+        }
+        // Match numbered list items like 1. item
+        if (line.match(/^\d+\.\s/)) {
+            return <li key={index} className="ml-6" style={{ listStyleType: 'decimal' }}>{line.substring(line.indexOf(' ') + 1)}</li>;
+        }
+        return <p key={index} className="my-2">{line}</p>;
     });
-  };
+};
 
   return (
     <motion.div
@@ -149,14 +157,14 @@ export function JobDescriptionAnalyzer() {
               <motion.div initial={{opacity: 0}} animate={{opacity: 1}} className="space-y-6">
                 <div>
                   <h3 className="text-lg font-semibold text-accent mb-2">Restructured Description</h3>
-                  <div className="text-sm text-foreground space-y-2">
+                  <div className="text-sm text-foreground space-y-2 prose">
                     {renderFormattedText(analysis.structuredContent)}
                   </div>
                 </div>
                 <Separator />
                  <div>
                   <h3 className="text-lg font-semibold text-accent mb-2">AI Recommendations</h3>
-                   <div className="text-sm text-foreground space-y-2">
+                   <div className="text-sm text-foreground space-y-2 prose">
                     {renderFormattedText(analysis.recommendations)}
                   </div>
                 </div>
