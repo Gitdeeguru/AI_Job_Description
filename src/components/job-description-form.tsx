@@ -63,7 +63,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                   <FormItem>
                     <FormLabel>Role Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Senior Software Engineer" {...field} />
+                      <Input placeholder="e.g., Senior Software Engineer" {...field} suppressHydrationWarning />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -76,7 +76,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                   <FormItem>
                     <FormLabel>Experience Level</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., 5-7 years" {...field} />
+                      <Input placeholder="e.g., 5-7 years" {...field} suppressHydrationWarning />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -89,7 +89,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., San Francisco, CA or Remote" {...field} />
+                      <Input placeholder="e.g., San Francisco, CA or Remote" {...field} suppressHydrationWarning />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -106,6 +106,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                         placeholder="e.g., React, TypeScript, Node.js, GraphQL, ..."
                         className="resize-none"
                         {...field}
+                        suppressHydrationWarning
                       />
                     </FormControl>
                     <FormMessage />
