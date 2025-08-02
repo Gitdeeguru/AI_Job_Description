@@ -1,0 +1,19 @@
+diff --git a/node_modules/react-quill/lib/component.js b/node_modules/react-quill/lib/component.js
+index 9be1a4c..4848873 100644
+--- a/node_modules/react-quill/lib/component.js
++++ b/node_modules/react-quill/lib/component.js
+@@ -107,11 +107,7 @@
+ 	},
+ 
+ 	getEditor: function() {
+-		if (!this.editor) throw new Error('Accessing editor before it is mounted');
+-		return this.editor;
+-	},
+-
+-	getEditorNode: function() {
+-		return ReactDOM.findDOMNode(this.getEditor());
++		return this.editor;
+ 	},
+ 
+ 	focus: function() {
+

@@ -26,6 +26,7 @@ export function RichTextEditor({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        forwardedRef={null}
       />
     </div>
   );
