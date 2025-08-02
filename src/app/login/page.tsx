@@ -360,6 +360,9 @@ export default function AuthPage() {
                               <FormControl>
                                 <div className="relative">
                                   <Input type={showPassword ? "text" : "password"} placeholder="********" {...field} suppressHydrationWarning />
+                                   <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={togglePasswordVisibility} suppressHydrationWarning>
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  </Button>
                                 </div>
                               </FormControl>
                               <FormMessage />
