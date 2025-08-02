@@ -7,6 +7,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 interface AuthContextType {
   user: User | null;
   login: (email: string) => void;
+  signup: (email: string, name: string) => void;
   logout: () => void;
   loading: boolean;
 }
@@ -33,10 +34,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = (email: string) => {
+    // In a real app, you'd verify password here.
     const userData: User = { 
       email,
       name: email.split('@')[0], // simple name from email
-      initials: (email.split('@')[0] || '').toUpperCase(),
+      initials: (email.split('@')[0]?.[0] || '').toUpperCase(),
+    };
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+    router.push('/profile');
+  };
+
+  const signup = (email: string, name: string) => {
+    const userData: User = { 
+      email,
+      name,
+      initials: (name[0] || '').toUpperCase(),
     };
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
@@ -50,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
