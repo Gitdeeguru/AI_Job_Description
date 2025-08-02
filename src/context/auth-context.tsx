@@ -25,13 +25,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem('user');
+      const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
     } catch (error) {
       console.error('Failed to parse user from localStorage', error);
-      localStorage.removeItem('user');
+      localStorage.removeItem('currentUser');
     } finally {
       setLoading(false);
     }
@@ -41,50 +41,99 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user) {
       const newUser = { ...user, ...updatedUserData };
       setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
+
+      try {
+        const storedUsers = localStorage.getItem('users');
+        const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
+        const userIndex = users.findIndex(u => u.email === newUser.email);
+        if (userIndex !== -1) {
+          users[userIndex] = newUser;
+          localStorage.setItem('users', JSON.stringify(users));
+        }
+      } catch (error) {
+         console.error('Failed to update user in users list', error);
+      }
+
     }
   };
 
   const login = (email: string, password?: string) => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser: User = JSON.parse(storedUser);
-      if (parsedUser.email === email && parsedUser.password === password) {
-        setUser(parsedUser);
+     try {
+      const storedUsers = localStorage.getItem('users');
+      const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
+      const foundUser = users.find(u => u.email === email);
+
+      if (foundUser && foundUser.password === password) {
+        setUser(foundUser);
+        localStorage.setItem('currentUser', JSON.stringify(foundUser));
         router.push('/profile');
         toast({
-          title: `Welcome back, ${parsedUser.name}!`,
+          title: `Welcome back, ${foundUser.name}!`,
           description: "You have been successfully logged in.",
         });
-        return;
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description: "Invalid email or password. Please try again.",
+        });
       }
+    } catch (error) {
+        console.error('Failed to process login', error);
+        toast({
+            variant: "destructive",
+            title: "Login Error",
+            description: "An unexpected error occurred. Please try again.",
+        });
     }
-    
-    toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
-    });
   };
 
   const signup = (email: string, name: string, password?: string) => {
-    const userData: User = { 
-      email,
-      name,
-      initials: (name[0] || '').toUpperCase(),
-      password,
-    };
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
-    router.push('/profile');
-     toast({
-        title: `Welcome, ${userData.name}!`,
-        description: "Your account has been created successfully.",
-    });
+    try {
+      const storedUsers = localStorage.getItem('users');
+      const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
+      
+      const existingUser = users.find(u => u.email === email);
+      if (existingUser) {
+        toast({
+          variant: "destructive",
+          title: "Signup Failed",
+          description: "An account with this email already exists.",
+        });
+        return;
+      }
+
+      const userData: User = { 
+        email,
+        name,
+        initials: (name[0] || '').toUpperCase(),
+        password,
+      };
+
+      users.push(userData);
+      localStorage.setItem('users', JSON.stringify(users));
+      
+      setUser(userData);
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+
+      router.push('/profile');
+       toast({
+          title: `Welcome, ${userData.name}!`,
+          description: "Your account has been created successfully.",
+      });
+    } catch(error) {
+      console.error('Failed to process signup', error);
+       toast({
+            variant: "destructive",
+            title: "Signup Error",
+            description: "An unexpected error occurred. Please try again.",
+        });
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem('currentUser');
     setUser(null);
     router.push('/login');
     toast({
