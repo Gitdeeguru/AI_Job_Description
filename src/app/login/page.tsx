@@ -33,10 +33,7 @@ export default function AuthPage() {
     setIsSubmitting(true);
     const success = await signup(data.email, data.name, data.password);
     if (success) {
-        toast({
-            title: "Success!",
-            description: "Your account has been created and verified.",
-        });
+        setView('login');
     }
     setIsSubmitting(false);
   };

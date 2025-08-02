@@ -117,13 +117,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       users.push(userData);
       localStorage.setItem('users', JSON.stringify(users));
       
-      setUser(userData);
-      localStorage.setItem('currentUser', JSON.stringify(userData));
-
-      router.push('/profile');
+      router.push('/login');
        toast({
-          title: `Welcome, ${userData.name}!`,
-          description: "Your account has been created successfully.",
+          title: `Account Created!`,
+          description: "Your account has been created successfully. Please log in.",
       });
       return true;
     } catch(error) {
