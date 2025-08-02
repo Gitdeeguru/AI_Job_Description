@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/auth-context';
@@ -9,16 +9,35 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Camera } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading, updateUser } = useAuth();
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        updateUser({ avatarUrl: base64String });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
 
   if (loading || !user) {
     return (
@@ -48,10 +67,25 @@ export default function ProfilePage() {
         >
           <Card className="bg-card/50 border-primary/20 shadow-lg backdrop-blur-md">
             <CardHeader className="items-center text-center">
-              <Avatar className="w-24 h-24 mb-4 border-4 border-primary">
-                <AvatarImage src={`https://i.pravatar.cc/150?u=${user.email}`} alt={user.name} />
-                <AvatarFallback className="text-4xl bg-accent text-accent-foreground">{user.initials}</AvatarFallback>
-              </Avatar>
+               <div className="relative group">
+                <Avatar className="w-24 h-24 mb-4 border-4 border-primary">
+                  <AvatarImage src={user.avatarUrl} alt={user.name} />
+                  <AvatarFallback className="text-4xl bg-accent text-accent-foreground">{user.initials}</AvatarFallback>
+                </Avatar>
+                <div 
+                  className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer mb-4"
+                  onClick={handleAvatarClick}
+                >
+                  <Camera className="h-8 w-8 text-white" />
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileChange}
+                    className="hidden" 
+                    accept="image/*"
+                  />
+                </div>
+              </div>
               <CardTitle className="font-headline text-3xl text-primary">{user.name}</CardTitle>
               <CardDescription>{user.email}</CardDescription>
             </CardHeader>

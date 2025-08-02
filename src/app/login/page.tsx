@@ -19,9 +19,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
-import { Briefcase } from 'lucide-react';
-
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
@@ -32,6 +29,10 @@ const signupSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
+  confirmPassword: z.string(),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ['confirmPassword'],
 });
 
 
@@ -47,23 +48,26 @@ export default function AuthPage() {
   }, [user, router]);
 
   const formSchema = useMemo(() => isLoginView ? loginSchema : signupSchema, [isLoginView]);
+  
+  const defaultValues = useMemo(() => {
+    return isLoginView 
+      ? { email: '', password: '' }
+      : { name: '', email: '', password: '', confirmPassword: '' };
+  }, [isLoginView]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: isLoginView 
-      ? { email: '', password: '' }
-      : { name: '', email: '', password: '' },
+    defaultValues: defaultValues,
   });
 
   useEffect(() => {
-    form.reset(isLoginView 
-      ? { email: '', password: '' }
-      : { name: '', email: '', password: '' });
-  }, [isLoginView, form]);
+    form.reset(defaultValues);
+  }, [isLoginView, form, defaultValues]);
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     if (isLoginView) {
-      login(data.email);
+      const loginData = data as z.infer<typeof loginSchema>;
+      login(loginData.email);
     } else {
       const signupData = data as z.infer<typeof signupSchema>;
       signup(signupData.email, signupData.name);
@@ -217,6 +221,19 @@ export default function AuthPage() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Password</FormLabel>
+                              <FormControl>
+                                <Input type="password" placeholder="********" {...field} suppressHydrationWarning />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="confirmPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Confirm Password</FormLabel>
                               <FormControl>
                                 <Input type="password" placeholder="********" {...field} suppressHydrationWarning />
                               </FormControl>

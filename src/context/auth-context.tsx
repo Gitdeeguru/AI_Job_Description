@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (email: string) => void;
   signup: (email: string, name: string) => void;
   logout: () => void;
+  updateUser: (updatedUser: Partial<User>) => void;
   loading: boolean;
 }
 
@@ -33,13 +34,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
+  const updateUser = (updatedUserData: Partial<User>) => {
+    if (user) {
+      const newUser = { ...user, ...updatedUserData };
+      setUser(newUser);
+      localStorage.setItem('user', JSON.stringify(newUser));
+    }
+  };
+
   const login = (email: string) => {
     // In a real app, you'd verify password here.
-    const userData: User = { 
-      email,
-      name: email.split('@')[0], // simple name from email
-      initials: (email.split('@')[0]?.[0] || '').toUpperCase(),
-    };
+    // We'll simulate fetching a user. If they don't exist, we create them.
+    const storedUser = localStorage.getItem('user');
+    let userData: User | null = null;
+    if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser.email === email) {
+            userData = parsedUser;
+        }
+    }
+
+    if (!userData) {
+      // For demo purposes, if user doesn't exist, create one on login
+       userData = { 
+        email,
+        name: email.split('@')[0], 
+        initials: (email.split('@')[0]?.[0] || '').toUpperCase(),
+      };
+    }
+    
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
     router.push('/profile');
@@ -63,7 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, loading, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
