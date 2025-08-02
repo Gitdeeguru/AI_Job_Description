@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userData: User = { 
       email,
       name: email.split('@')[0], // simple name from email
-      initials: (email.split('@')[0][0] || '').toUpperCase(),
+      initials: (email.split('@')[0] || '').toUpperCase(),
     };
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
