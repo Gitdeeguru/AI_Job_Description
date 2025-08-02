@@ -10,7 +10,6 @@ import { ai } from '@/ai/genkit';
 import { ChatInput, ChatOutput, ChatInputSchema, ChatOutputSchema } from '@/lib/types';
 import { z } from 'zod';
 
-
 export async function chat(input: ChatInput): Promise<ChatOutput> {
   return chatFlow(input);
 }
@@ -35,6 +34,23 @@ Common user questions you should be able to answer:
 Keep your answers concise and easy to understand.`;
 
 
+const chatPrompt = ai.definePrompt({
+  name: 'chatbotPrompt',
+  input: { schema: ChatInputSchema },
+  output: { schema: z.string() },
+  system: systemPrompt,
+  prompt: `{{#each history}}
+{{#if (eq this.role 'user')}}
+User: {{{this.content}}}
+{{else}}
+Model: {{{this.content}}}
+{{/if}}
+{{/each}}
+User: {{{message}}}
+Model: `,
+});
+
+
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
@@ -42,11 +58,7 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async (input) => {
-    const { response } = await ai.generate({
-      prompt: input.message,
-      history: input.history,
-      system: systemPrompt,
-    });
-    return { response: response.text };
+    const { output } = await chatPrompt(input);
+    return { response: output || 'Sorry, I could not generate a response.' };
   }
 );
