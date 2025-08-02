@@ -3,6 +3,8 @@
 import { User } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+
 
 interface AuthContextType {
   user: User | null;
@@ -19,6 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     try {
@@ -66,6 +69,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
     router.push('/profile');
+    toast({
+        title: `Welcome back, ${userData.name}!`,
+        description: "You have been successfully logged in.",
+    });
   };
 
   const signup = (email: string, name: string) => {
@@ -77,12 +84,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
     router.push('/profile');
+     toast({
+        title: `Welcome, ${userData.name}!`,
+        description: "Your account has been created successfully.",
+    });
   };
 
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
     router.push('/login');
+    toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out. Thanks for visiting!",
+    });
   };
 
   return (
