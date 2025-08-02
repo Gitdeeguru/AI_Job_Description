@@ -91,7 +91,7 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4">
                <p className="text-muted-foreground text-center">
-                Welcome to your AI HR Assistant profile. Here you can manage your account settings and view your activity.
+                Welcome, {user.name}! Here you can manage your account settings and view your activity.
               </p>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button onClick={logout} variant="destructive">
