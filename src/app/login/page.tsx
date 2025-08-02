@@ -67,10 +67,10 @@ export default function AuthPage() {
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     if (isLoginView) {
       const loginData = data as z.infer<typeof loginSchema>;
-      login(loginData.email);
+      login(loginData.email, loginData.password);
     } else {
       const signupData = data as z.infer<typeof signupSchema>;
-      signup(signupData.email, signupData.name);
+      signup(signupData.email, signupData.name, signupData.password);
     }
   };
 

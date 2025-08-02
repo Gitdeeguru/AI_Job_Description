@@ -8,8 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string) => void;
-  signup: (email: string, name: string) => void;
+  login: (email: string, password?: string) => void;
+  signup: (email: string, name: string, password?: string) => void;
   logout: () => void;
   updateUser: (updatedUser: Partial<User>) => void;
   loading: boolean;
@@ -45,41 +45,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = (email: string) => {
-    // In a real app, you'd verify password here.
-    // We'll simulate fetching a user. If they don't exist, we create them.
+  const login = (email: string, password?: string) => {
     const storedUser = localStorage.getItem('user');
-    let userData: User | null = null;
     if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser.email === email) {
-            userData = parsedUser;
-        }
-    }
-
-    if (!userData) {
-      // For demo purposes, if user doesn't exist, create one on login
-       userData = { 
-        email,
-        name: email.split('@')[0], 
-        initials: (email.split('@')[0]?.[0] || '').toUpperCase(),
-      };
+      const parsedUser: User = JSON.parse(storedUser);
+      if (parsedUser.email === email && parsedUser.password === password) {
+        setUser(parsedUser);
+        router.push('/profile');
+        toast({
+          title: `Welcome back, ${parsedUser.name}!`,
+          description: "You have been successfully logged in.",
+        });
+        return;
+      }
     }
     
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
-    router.push('/profile');
     toast({
-        title: `Welcome back, ${userData.name}!`,
-        description: "You have been successfully logged in.",
+        variant: "destructive",
+        title: "Login Failed",
+        description: "Invalid email or password. Please try again.",
     });
   };
 
-  const signup = (email: string, name: string) => {
+  const signup = (email: string, name: string, password?: string) => {
     const userData: User = { 
       email,
       name,
       initials: (name[0] || '').toUpperCase(),
+      password,
     };
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
