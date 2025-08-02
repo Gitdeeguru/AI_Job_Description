@@ -8,8 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password?: string) => void;
-  signup: (email: string, name: string, password?: string) => void;
+  login: (email: string, password?: string) => Promise<boolean>;
+  signup: (email: string, name: string, password?: string) => Promise<boolean>;
   logout: () => void;
   updateUser: (updatedUser: Partial<User>) => void;
   loading: boolean;
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = (email: string, password?: string) => {
+  const login = async (email: string, password?: string): Promise<boolean> => {
      try {
       const storedUsers = localStorage.getItem('users');
       const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
@@ -72,12 +72,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           title: `Welcome back, ${foundUser.name}!`,
           description: "You have been successfully logged in.",
         });
+        return true;
       } else {
         toast({
           variant: "destructive",
           title: "Login Failed",
           description: "Invalid email or password. Please try again.",
         });
+        return false;
       }
     } catch (error) {
         console.error('Failed to process login', error);
@@ -86,10 +88,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             title: "Login Error",
             description: "An unexpected error occurred. Please try again.",
         });
+        return false;
     }
   };
 
-  const signup = (email: string, name: string, password?: string) => {
+  const signup = async (email: string, name: string, password?: string): Promise<boolean> => {
     try {
       const storedUsers = localStorage.getItem('users');
       const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
@@ -101,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           title: "Signup Failed",
           description: "An account with this email already exists.",
         });
-        return;
+        return false;
       }
 
       const userData: User = { 
@@ -122,6 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           title: `Welcome, ${userData.name}!`,
           description: "Your account has been created successfully.",
       });
+      return true;
     } catch(error) {
       console.error('Failed to process signup', error);
        toast({
@@ -129,6 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             title: "Signup Error",
             description: "An unexpected error occurred. Please try again.",
         });
+      return false;
     }
   };
 

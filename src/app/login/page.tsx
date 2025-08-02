@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { Loader2 } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
@@ -38,6 +39,7 @@ const signupSchema = z.object({
 
 export default function AuthPage() {
   const [isLoginView, setIsLoginView] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { login, signup, user } = useAuth();
   const router = useRouter();
 
@@ -64,14 +66,16 @@ export default function AuthPage() {
     form.reset(defaultValues);
   }, [isLoginView, form, defaultValues]);
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
     if (isLoginView) {
       const loginData = data as z.infer<typeof loginSchema>;
-      login(loginData.email, loginData.password);
+      await login(loginData.email, loginData.password);
     } else {
       const signupData = data as z.infer<typeof signupSchema>;
-      signup(signupData.email, signupData.name, signupData.password);
+      await signup(signupData.email, signupData.name, signupData.password);
     }
+    setIsSubmitting(false);
   };
 
   const toggleView = () => setIsLoginView(!isLoginView);
@@ -166,8 +170,8 @@ export default function AuthPage() {
                           )}
                         />
                         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                          <Button type="submit" className="w-full bg-primary hover:bg-primary/90" suppressHydrationWarning>
-                            Sign In
+                          <Button type="submit" className="w-full bg-primary hover:bg-primary/90" suppressHydrationWarning disabled={isSubmitting}>
+                            {isSubmitting ? <Loader2 className="animate-spin" /> : 'Sign In'}
                           </Button>
                         </motion.div>
                          <p className="text-center text-sm text-muted-foreground">
@@ -242,8 +246,8 @@ export default function AuthPage() {
                           )}
                         />
                         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                          <Button type="submit" className="w-full bg-primary hover:bg-primary/90" suppressHydrationWarning>
-                            Sign Up
+                          <Button type="submit" className="w-full bg-primary hover:bg-primary/90" suppressHydrationWarning disabled={isSubmitting}>
+                           {isSubmitting ? <Loader2 className="animate-spin" /> : 'Sign Up'}
                           </Button>
                         </motion.div>
                         <p className="text-center text-sm text-muted-foreground">
