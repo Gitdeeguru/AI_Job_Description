@@ -21,6 +21,8 @@ import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-descri
 
 const formSchema = z.object({
   roleTitle: z.string().min(2, { message: 'Role title must be at least 2 characters.' }),
+  companyName: z.string().min(2, { message: 'Company name must be at least 2 characters.' }),
+  aboutCompany: z.string().min(10, { message: 'About company must be at least 10 characters.' }),
   experience: z.string().min(1, { message: 'Experience is required.' }),
   location: z.string().min(2, { message: 'Location is required.' }),
   keySkills: z.string().min(2, { message: 'At least one skill is required.' }),
@@ -39,6 +41,8 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
       experience: '',
       location: '',
       keySkills: '',
+      companyName: '',
+      aboutCompany: '',
     },
   });
 
@@ -64,6 +68,37 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                     <FormLabel>Role Title</FormLabel>
                     <FormControl>
                       <Input placeholder="e.g., Senior Software Engineer" {...field} suppressHydrationWarning />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Acme Inc." {...field} suppressHydrationWarning />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="aboutCompany"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>About Company</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="e.g., We are a fast-growing startup..."
+                        className="resize-none"
+                        {...field}
+                        suppressHydrationWarning
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

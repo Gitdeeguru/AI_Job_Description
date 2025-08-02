@@ -16,6 +16,8 @@ const GenerateJobDescriptionInputSchema = z.object({
   experience: z.string().describe('The experience level required for the job (e.g., 2-5 years).'),
   location: z.string().describe('The location of the job (e.g., Remote/Bangalore).'),
   keySkills: z.string().describe('A comma-separated list of key skills required for the job (e.g., React, Node.js).'),
+  companyName: z.string().describe('The name of the company.'),
+  aboutCompany: z.string().describe('A brief description of the company.'),
 });
 export type GenerateJobDescriptionInput = z.infer<typeof GenerateJobDescriptionInputSchema>;
 
@@ -34,8 +36,10 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateJobDescriptionOutputSchema},
   prompt: `You are an expert HR assistant specializing in writing job descriptions.
 
-You will use the information provided to generate a compelling job description for the role. Please structure the output with clear sections and use bullet points for lists of responsibilities and qualifications.
+You will use the information provided to generate a compelling job description for the role. Please structure the output with clear sections like "About the Company", "Key Responsibilities", and "Qualifications". Use bullet points for lists.
 
+Company Name: {{{companyName}}}
+About Company: {{{aboutCompany}}}
 Role Title: {{{roleTitle}}}
 Experience: {{{experience}}}
 Location: {{{location}}}

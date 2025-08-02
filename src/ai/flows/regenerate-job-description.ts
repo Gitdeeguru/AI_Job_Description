@@ -1,5 +1,3 @@
-// Regenerates job descriptions with slight variations based on the initial input.
-
 'use server';
 
 import {ai} from '@/ai/genkit';
@@ -10,6 +8,8 @@ const RegenerateJobDescriptionInputSchema = z.object({
   experience: z.string().describe('The experience level required for the role (e.g., 2-5 years).'),
   location: z.string().describe('The location of the job (e.g., Remote/Bangalore).'),
   keySkills: z.string().describe('A comma-separated list of key skills required for the role (e.g., React, Node.js).'),
+  companyName: z.string().describe('The name of the company.'),
+  aboutCompany: z.string().describe('A brief description of the company.'),
   originalDescription: z.string().describe('The original job description to regenerate with variations.'),
 });
 export type RegenerateJobDescriptionInput = z.infer<typeof RegenerateJobDescriptionInputSchema>;
@@ -33,6 +33,8 @@ You are provided with an existing job description, and your job is to rewrite it
 
 Original Job Description: {{{originalDescription}}}
 
+Company Name: {{{companyName}}}
+About Company: {{{aboutCompany}}}
 Role Title: {{{roleTitle}}}
 Experience: {{{experience}}}
 Location: {{{location}}}
