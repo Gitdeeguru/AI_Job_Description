@@ -19,12 +19,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+const captchaSchema = z.object({
+  captcha: z.string().min(1, { message: 'Please solve the CAPTCHA.' }),
+});
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
   password: z.string().min(1, { message: 'Password is required.' }),
-});
+}).merge(captchaSchema);
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -34,14 +39,17 @@ const signupSchema = z.object({
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
-});
+}).merge(captchaSchema);
 
 
 export default function AuthPage() {
   const [isLoginView, setIsLoginView] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [captcha, setCaptcha] = useState({ num1: 0, num2: 0, answer: 0 });
   const { login, signup, user } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
@@ -49,12 +57,22 @@ export default function AuthPage() {
     }
   }, [user, router]);
 
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    setCaptcha({ num1, num2, answer: num1 + num2 });
+  };
+  
+  useEffect(() => {
+    generateCaptcha();
+  }, [isLoginView]);
+
   const formSchema = useMemo(() => isLoginView ? loginSchema : signupSchema, [isLoginView]);
   
   const defaultValues = useMemo(() => {
     return isLoginView 
-      ? { email: '', password: '' }
-      : { name: '', email: '', password: '', confirmPassword: '' };
+      ? { email: '', password: '', captcha: '' }
+      : { name: '', email: '', password: '', confirmPassword: '', captcha: '' };
   }, [isLoginView]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -64,9 +82,21 @@ export default function AuthPage() {
 
   useEffect(() => {
     form.reset(defaultValues);
+    generateCaptcha();
   }, [isLoginView, form, defaultValues]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (parseInt(data.captcha, 10) !== captcha.answer) {
+      toast({
+        variant: "destructive",
+        title: "CAPTCHA Failed",
+        description: "Please solve the math problem correctly.",
+      });
+      form.setValue('captcha', '');
+      generateCaptcha();
+      return;
+    }
+
     setIsSubmitting(true);
     if (isLoginView) {
       const loginData = data as z.infer<typeof loginSchema>;
@@ -76,9 +106,15 @@ export default function AuthPage() {
       await signup(signupData.email, signupData.name, signupData.password);
     }
     setIsSubmitting(false);
+    generateCaptcha();
   };
 
-  const toggleView = () => setIsLoginView(!isLoginView);
+  const toggleView = () => {
+    setIsLoginView(!isLoginView);
+    setShowPassword(false);
+  };
+  
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const formVariants = {
     hidden: { opacity: 0, x: -50 },
@@ -136,7 +172,7 @@ export default function AuthPage() {
                   </CardHeader>
                   <CardContent>
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <FormField
                           control={form.control}
                           name="email"
@@ -157,7 +193,25 @@ export default function AuthPage() {
                             <FormItem>
                               <FormLabel>Password</FormLabel>
                               <FormControl>
-                                <Input type="password" placeholder="********" {...field} suppressHydrationWarning />
+                                <div className="relative">
+                                  <Input type={showPassword ? "text" : "password"} placeholder="********" {...field} suppressHydrationWarning />
+                                  <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={togglePasswordVisibility}>
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  </Button>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="captcha"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Verify you are human: {`${captcha.num1} + ${captcha.num2} = ?`}</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Your answer" {...field} suppressHydrationWarning type="number" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -168,7 +222,7 @@ export default function AuthPage() {
                             {isSubmitting ? <Loader2 className="animate-spin" /> : 'Sign In'}
                           </Button>
                         </motion.div>
-                         <p className="text-center text-sm text-muted-foreground">
+                         <p className="text-center text-sm text-muted-foreground pt-2">
                           Don&apos;t have an account?{' '}
                           <Button variant="link" type="button" onClick={toggleView} className="p-0 h-auto text-primary" suppressHydrationWarning>
                             Sign up
@@ -186,7 +240,7 @@ export default function AuthPage() {
                   </CardHeader>
                   <CardContent>
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <FormField
                           control={form.control}
                           name="name"
@@ -220,7 +274,12 @@ export default function AuthPage() {
                             <FormItem>
                               <FormLabel>Password</FormLabel>
                               <FormControl>
-                                <Input type="password" placeholder="********" {...field} suppressHydrationWarning />
+                                <div className="relative">
+                                  <Input type={showPassword ? "text" : "password"} placeholder="********" {...field} suppressHydrationWarning />
+                                  <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={togglePasswordVisibility}>
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                  </Button>
+                                </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -233,7 +292,22 @@ export default function AuthPage() {
                             <FormItem>
                               <FormLabel>Confirm Password</FormLabel>
                               <FormControl>
-                                <Input type="password" placeholder="********" {...field} suppressHydrationWarning />
+                                <div className="relative">
+                                  <Input type={showPassword ? "text" : "password"} placeholder="********" {...field} suppressHydrationWarning />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="captcha"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Verify you are human: {`${captcha.num1} + ${captcha.num2} = ?`}</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Your answer" {...field} suppressHydrationWarning type="number" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -244,7 +318,7 @@ export default function AuthPage() {
                            {isSubmitting ? <Loader2 className="animate-spin" /> : 'Sign Up'}
                           </Button>
                         </motion.div>
-                        <p className="text-center text-sm text-muted-foreground">
+                        <p className="text-center text-sm text-muted-foreground pt-2">
                           Already have an account?{' '}
                           <Button variant="link" type="button" onClick={toggleView} className="p-0 h-auto text-primary" suppressHydrationWarning>
                             Login
@@ -262,3 +336,5 @@ export default function AuthPage() {
     </div>
   );
 }
+
+    
