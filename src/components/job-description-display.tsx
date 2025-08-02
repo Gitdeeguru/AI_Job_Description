@@ -44,9 +44,9 @@ export function JobDescriptionDisplay({ jobDescription, isLoading, onRegenerate 
 
   const renderFormattedDescription = () => {
     if (!jobDescription) return null;
-
-    const lines = jobDescription.split('\\n');
-
+  
+    const lines = jobDescription.split('\n').filter(line => line.trim() !== '');
+  
     return lines.map((line, index) => {
       line = line.trim();
       if (line.startsWith('## ')) {
@@ -55,10 +55,7 @@ export function JobDescriptionDisplay({ jobDescription, isLoading, onRegenerate 
       if (line.startsWith('- ')) {
         return <li key={index} className="ml-4 list-disc">{line.substring(2)}</li>;
       }
-      if (line) {
-        return <p key={index} className="my-2">{line}</p>;
-      }
-      return null;
+      return <p key={index} className="my-2">{line}</p>;
     });
   };
 
