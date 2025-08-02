@@ -12,6 +12,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-description';
 import { generateJobDescription, regenerateJobDescription } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/auth-context';
+import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
   const [jobDescription, setJobDescription] = useState<string | null>(null);
@@ -19,18 +22,28 @@ export default function Home() {
   const [formInput, setFormInput] = useState<GenerateJobDescriptionInput | null>(null);
   const [history, setHistory] = useState<JobHistoryItem[]>([]);
   const { toast } = useToast();
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    try {
-      const storedHistory = localStorage.getItem('jobDescriptionHistory');
-      if (storedHistory) {
-        setHistory(JSON.parse(storedHistory));
-      }
-    } catch (error) {
-      console.error('Failed to parse history from localStorage', error);
-      localStorage.removeItem('jobDescriptionHistory');
+    if (!loading && !user) {
+      router.push('/login');
     }
-  }, []);
+  }, [user, loading, router]);
+  
+  useEffect(() => {
+    if (user) {
+      try {
+        const storedHistory = localStorage.getItem('jobDescriptionHistory');
+        if (storedHistory) {
+          setHistory(JSON.parse(storedHistory));
+        }
+      } catch (error) {
+        console.error('Failed to parse history from localStorage', error);
+        localStorage.removeItem('jobDescriptionHistory');
+      }
+    }
+  }, [user]);
 
   const addToHistory = (newItem: JobHistoryItem) => {
     const updatedHistory = [newItem, ...history];
@@ -91,6 +104,23 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+  
+  if (loading || !user) {
+    return (
+       <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <main className="flex-1 container mx-auto p-4 md:p-8 flex items-center justify-center">
+            <div className="w-full space-y-4">
+                <Skeleton className="h-10 w-1/3 mx-auto" />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4">
+                  <Skeleton className="h-[500px] w-full" />
+                  <Skeleton className="h-[500px] w-full" />
+                </div>
+            </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
