@@ -88,39 +88,33 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-background">
-      <div className="hidden lg:flex flex-col items-center justify-center bg-primary/10 p-8 text-center relative overflow-hidden">
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <Image
-            src="https://placehold.co/600x400.png"
-            alt="AI HR Assistant Illustration"
-            width={500}
-            height={400}
-            className="rounded-lg shadow-2xl"
-            data-ai-hint="AI assistant robot"
-          />
-        </motion.div>
-         <motion.h2 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-6 font-headline text-3xl font-bold text-primary"
-        >
-          AI HR Assistant
-        </motion.h2>
-        <motion.p 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="mt-2 text-lg text-primary/80"
-        >
-          Your Virtual HR Partner, powered by AI.
-        </motion.p>
-        <div className="absolute top-0 -left-1/4 w-full h-full bg-primary/5 rounded-full-blob-1 filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute bottom-0 -right-1/4 w-full h-full bg-accent/5 rounded-full-blob-2 filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+      <div className="hidden lg:flex relative">
+        <Image
+          src="https://placehold.co/1000x1000.png"
+          alt="Abstract background"
+          layout="fill"
+          objectFit="cover"
+          className="z-0"
+          data-ai-hint="abstract technology"
+        />
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full bg-black/50 p-8 text-center">
+          <motion.h2 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="mt-6 font-headline text-4xl font-bold text-white"
+          >
+            AI HR Assistant
+          </motion.h2>
+          <motion.p 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="mt-2 text-xl text-white/80"
+          >
+            Your Virtual HR Partner, powered by AI.
+          </motion.p>
+        </div>
       </div>
       <div className="flex items-center justify-center p-6 sm:p-12">
         <Card className="mx-auto max-w-sm w-full bg-card/60 border-primary/20 shadow-xl backdrop-blur-lg">
