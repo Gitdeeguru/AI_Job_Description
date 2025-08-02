@@ -7,6 +7,7 @@ import { JobDescriptionForm } from '@/components/job-description-form';
 import { JobDescriptionDisplay } from '@/components/job-description-display';
 import { JobDescriptionAnalyzer } from '@/components/job-description-analyzer';
 import { JobDescriptionHistory, type JobHistoryItem } from '@/components/job-description-history';
+import { Chatbot } from '@/components/chatbot';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-description';
 import { generateJobDescription, regenerateJobDescription } from '@/app/actions';
@@ -126,6 +127,7 @@ export default function Home() {
           </TabsContent>
         </Tabs>
       </main>
+      <Chatbot />
     </div>
   );
 }

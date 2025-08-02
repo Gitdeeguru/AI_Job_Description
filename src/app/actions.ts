@@ -3,6 +3,8 @@
 import { generateJobDescription as genJobDesc, GenerateJobDescriptionInput, GenerateJobDescriptionOutput } from '@/ai/flows/generate-job-description';
 import { regenerateJobDescription as regenJobDesc, RegenerateJobDescriptionInput, RegenerateJobDescriptionOutput } from '@/ai/flows/regenerate-job-description';
 import { analyzeJobDescription as analyzeJobDesc, AnalyzeJobDescriptionInput, AnalyzeJobDescriptionOutput } from '@/ai/flows/analyze-job-description';
+import { chat as performChat } from '@/ai/flows/chatbot';
+import { ChatInput, ChatOutput } from '@/lib/types';
 
 
 export async function generateJobDescription(input: GenerateJobDescriptionInput): Promise<GenerateJobDescriptionOutput> {
@@ -15,4 +17,8 @@ export async function regenerateJobDescription(input: RegenerateJobDescriptionIn
 
 export async function analyzeJobDescription(input: AnalyzeJobDescriptionInput): Promise<AnalyzeJobDescriptionOutput> {
     return await analyzeJobDesc(input);
+}
+
+export async function chat(input: ChatInput): Promise<ChatOutput> {
+    return await performChat(input);
 }
