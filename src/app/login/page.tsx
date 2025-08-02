@@ -95,7 +95,7 @@ export default function AuthPage() {
           layout="fill"
           objectFit="cover"
           className="z-0"
-          data-ai-hint="abstract technology"
+          data-ai-hint="blue network"
         />
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full bg-black/50 p-8 text-center">
           <motion.h2 
