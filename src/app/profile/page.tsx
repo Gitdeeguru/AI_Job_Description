@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/auth-context';
 import { Header } from '@/components/header';
@@ -9,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Camera } from 'lucide-react';
+import { Camera, Briefcase } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, logout, loading, updateUser } = useAuth();
@@ -93,11 +94,21 @@ export default function ProfilePage() {
                <p className="text-muted-foreground text-center">
                 Welcome, {user.name}! Here you can manage your account settings and view your activity.
               </p>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button onClick={logout} variant="destructive">
-                  Log Out
-                </Button>
-              </motion.div>
+              <div className="flex items-center gap-4">
+                <Link href="/" passHref>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button>
+                      <Briefcase className="mr-2 h-4 w-4" />
+                      Generate JD
+                    </Button>
+                  </motion.div>
+                </Link>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button onClick={logout} variant="destructive">
+                    Log Out
+                  </Button>
+                </motion.div>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
