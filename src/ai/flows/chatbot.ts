@@ -39,7 +39,7 @@ const chatPrompt = ai.definePrompt({
   input: { schema: ChatInputSchema },
   output: { schema: z.string() },
   system: systemPrompt,
-  prompt: `{{#each history}}{{#if (lookup this 'role' 'user')}}User: {{this.content}}
+  prompt: `{{#each history}}{{#if (eq this.role 'user')}}User: {{this.content}}
 {{else}}Model: {{this.content}}
 {{/if}}{{/each}}
 User: {{{message}}}
@@ -58,3 +58,7 @@ const chatFlow = ai.defineFlow(
     return { response: output || 'Sorry, I could not generate a response.' };
   }
 );
+
+function eq(a: string, b: string) {
+  return a === b;
+}
