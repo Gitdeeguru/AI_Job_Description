@@ -72,7 +72,7 @@ export default function LoginPage() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="you@company.com" {...field} />
+                          <Input placeholder="you@company.com" {...field} suppressHydrationWarning />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -85,14 +85,14 @@ export default function LoginPage() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="********" {...field} />
+                          <Input type="password" placeholder="********" {...field} suppressHydrationWarning />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" suppressHydrationWarning>
                       Sign In
                     </Button>
                   </motion.div>
