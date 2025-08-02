@@ -34,14 +34,14 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateJobDescriptionOutputSchema},
   prompt: `You are an expert HR assistant specializing in writing job descriptions.
 
-You will use the information provided to generate a compelling job description for the role.
+You will use the information provided to generate a compelling job description for the role. Please structure the output with clear sections and use bullet points for lists of responsibilities and qualifications.
 
 Role Title: {{{roleTitle}}}
 Experience: {{{experience}}}
 Location: {{{location}}}
 Key Skills: {{{keySkills}}}
 
-Job Description:`, // Removed any Handlebars calls to undefined functions.
+Job Description (in point format):`,
 });
 
 const generateJobDescriptionFlow = ai.defineFlow(
