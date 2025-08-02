@@ -1,22 +1,148 @@
-diff --git a/node_modules/react-quill/lib/component.js b/node_modules/react-quill/lib/component.js
-index 4133463..4042852 100644
---- a/node_modules/react-quill/lib/component.js
-+++ b/node_modules/react-quill/lib/component.js
-@@ -10,7 +10,7 @@
- var _      = require('./utils');
- var Quill  = require('quill');
- var React  = require('react');
--var ReactDOM = require('react-dom');
-+var ReactDOM = require('react-dom/client');
- 
- var QuillComponent = React.createClass({
- 
-@@ -321,7 +321,7 @@
+diff --git a/node_modules/react-quill/lib/index.js b/node_modules/react-quill/lib/index.js
+index 95a847f..5349c25 100644
+--- a/node_modules/react-quill/lib/index.js
++++ b/node_modules/react-quill/lib/index.js
+@@ -213,7 +213,7 @@
  	},
  
- 	getEditorNode: function() {
--		return ReactDOM.findDOMNode(this.editor);
-+		return this.editor.current;
+ 	/*
+-	We require editors to be mounted if we want to access their methods.
++	We require editors to be mounted if we want to access their methods. but 'findDOMNode' is deprecated in React.StrictMode.
+ 	*/
+ 	isMounted: function() {
+ 		return this.lastDelta !== undefined;
+@@ -231,10 +231,11 @@
+ 	 * https://github.com/zenoamaro/react-quill/pull/195
+ 	 */
+ 	setEditorSelection: function(range, source) {
+-		var editor = this.getEditor();
+-		if (range) {
+-			// Validate the range before trying to set it.
+-			// See: https://github.com/zenoamaro/react-quill/issues/435
+-			var length = editor.getLength();
+-			range.index = Math.max(0, Math.min(range.index, length-1));
+-			range.length = Math.max(0, Math.min(range.length, (length-1)-range.index));
+-		}
+-		editor.setSelection(range, source);
++		// if (range) {
++		// 	// Validate the range before trying to set it.
++		// 	// See: https://github.com/zenoamaro/react-quill/issues/435
++		// 	const length = this.getEditor().getLength();
++		// 	range.index = Math.max(0, Math.min(range.index, length-1));
++		// 	range.length = Math.max(0, Math.min(range.length, (length-1)-range.index));
++		// }
++		// this.getEditor().setSelection(range, source);
  	},
  
+ 	setEditorContents: function(value, source) {
+@@ -345,7 +346,7 @@
+ 	},
+ 
+ 	getEditor: function() {
+-		return this.quill;
++		return this.state.quill;
+ 	},
+ 
+ 	/**
+@@ -353,7 +354,7 @@
+ 	 * https://github.com/zenoamaro/react-quill/issues/107
+ 	 */
  	getEditingArea: function() {
+-		return ReactDOM.findDOMNode(this.editingArea);
++		return this.editingArea.current;
+ 	},
+ 
+ 	getSelection: function() {
+@@ -406,10 +407,10 @@
+ 		var selection = this.getSelection();
+ 		var isSame = selection &&
+ 			range.index === selection.index &&
+-			range.length === selection.length;
+-		if (isSame) return;
+-		var shouldAnimate = !this.isFocused() && this.props.scrollingContainer;
+-		if (shouldAnimate) {
+-			this.setEditorSelection(range, 'silent');
+-		} else {
+-			this.setEditorSelection(range, 'user');
+-		}
++			range.length === selection.length;
++		// if (isSame) return;
++		// var shouldAnimate = !this.isFocused() && this.props.scrollingContainer;
++		// if (shouldAnimate) {
++		// 	this.setEditorSelection(range, 'silent');
++		// } else {
++		// 	this.setEditorSelection(range, 'user');
++		// }
+ 	},
+ 
+ 	/*
+@@ -424,7 +425,7 @@
+ 	createEditor: function(element, config) {
+ 		var editor = new Quill(element, config);
+ 		if (config.readOnly) {
+-			editor.disable();
++			editor.enable(false);
+ 		}
+ 		return editor;
+ 	},
+@@ -519,9 +520,7 @@
+ 			// NOTE: This will create a Quill instance.
+ 			this.instantiateEditor();
+ 		}
+-		if (this.quill) {
+-			// The editor is instantiated, update its contents.
+-			this.setEditorContents(this.state.value);
+-		}
++		// The editor is instantiated, update its contents.
++		this.setEditorContents(this.state.value);
+ 	},
+ 
+ 	componentWillUnmount: function() {
+@@ -539,9 +538,7 @@
+ 			// The editor has been instantiated, update its contents.
+ 			this.setEditorContents(nextState.value);
+ 		} else if (this.state.value !== nextState.value) {
+-			// The editor is not yet instantiated, just update state.
+-			// The component will be rerendered.
+-			// The editor will be instantiated on the next render with the new value.
++			// The editor is not yet instantiated and the value has changed.
++			// This will be handled by 'componentDidMount()'.
+ 		}
+ 	},
+ 
+@@ -583,9 +580,7 @@
+ 			// the 'value' property until the editor is mounted.
+ 			this.setEditorContents(this.state.value);
+ 		} else {
+-			// Editor not mounted yet, update the state so it can be used
+-			// when the editor is mounted.
+-			this.setState({ value: nextProps.value });
++			this.setState({ value: nextProps.value }); // Not a deep clone
+ 		}
+ 	},
+ 
+@@ -628,7 +623,7 @@
+ 	},
+ 
+ 	renderEditingArea: function() {
+-		var self = this;
++		var children = this.props.children;
+ 		var self = this;
+ 		var editingArea =
+ 			React.createElement('div', {
+@@ -638,7 +633,14 @@
+ 				onBlur: function() { self.setState({ isFocused:false }); }
+ 			});
+ 
+-		if (this.props.children) {
++		if (React.Children.count(children)) {
++			var child = React.Children.only(children);
++			editingArea = React.cloneElement(child, {
++				ref: this.editingArea,
++				style: this.getEditorStyle(),
++				className: this.getEditorClassName()
++			});
++		} else if (this.props.children) {
+ 			return React.cloneElement(
+ 				this.props.children,
+ 				{ ref: function(el) { self.editingArea = el; } }
