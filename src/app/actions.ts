@@ -5,6 +5,7 @@ import { regenerateJobDescription as regenJobDesc, RegenerateJobDescriptionInput
 import { analyzeJobDescription as analyzeJobDesc, AnalyzeJobDescriptionInput, AnalyzeJobDescriptionOutput } from '@/ai/flows/analyze-job-description';
 import { chat as performChat } from '@/ai/flows/chatbot';
 import { ChatInput, ChatOutput } from '@/lib/types';
+import { parseJobDescriptionFile as parseJobDescFile, ParseJobDescriptionFileInput, ParseJobDescriptionFileOutput } from '@/ai/flows/parse-job-description-file';
 
 
 export async function generateJobDescription(input: GenerateJobDescriptionInput): Promise<GenerateJobDescriptionOutput> {
@@ -21,4 +22,8 @@ export async function analyzeJobDescription(input: AnalyzeJobDescriptionInput): 
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
     return await performChat(input);
+}
+
+export async function parseJobDescriptionFile(input: ParseJobDescriptionFileInput): Promise<ParseJobDescriptionFileOutput> {
+    return await parseJobDescFile(input);
 }

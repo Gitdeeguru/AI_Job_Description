@@ -7,6 +7,7 @@ import { JobDescriptionForm } from '@/components/job-description-form';
 import { JobDescriptionDisplay } from '@/components/job-description-display';
 import { JobDescriptionAnalyzer } from '@/components/job-description-analyzer';
 import { JobDescriptionHistory, type JobHistoryItem } from '@/components/job-description-history';
+import { JobDescriptionParser } from '@/components/job-description-parser';
 import { Chatbot } from '@/components/chatbot';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-description';
@@ -127,9 +128,10 @@ export default function Home() {
       <Header />
       <main className="flex-1 container mx-auto p-4 md:p-8">
         <Tabs defaultValue="generate">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="generate">Generate JD</TabsTrigger>
             <TabsTrigger value="analyze">Analyze JD</TabsTrigger>
+            <TabsTrigger value="parse">Parse Document</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
           <TabsContent value="generate">
@@ -151,6 +153,9 @@ export default function Home() {
           </TabsContent>
           <TabsContent value="analyze">
             <JobDescriptionAnalyzer />
+          </TabsContent>
+          <TabsContent value="parse">
+            <JobDescriptionParser />
           </TabsContent>
           <TabsContent value="history">
             <JobDescriptionHistory history={history} />
