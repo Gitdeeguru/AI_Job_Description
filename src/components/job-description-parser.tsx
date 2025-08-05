@@ -154,7 +154,7 @@ export function JobDescriptionParser() {
       
       <Card className="bg-card/50 border-primary/20 shadow-lg h-full backdrop-blur-md">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl text-primary">Parsed Content</CardTitle>
+          <CardTitle className="font-headline text-2xl text-primary">Generate JD by AI</CardTitle>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[500px] p-4 rounded-md border border-input bg-background/50">
