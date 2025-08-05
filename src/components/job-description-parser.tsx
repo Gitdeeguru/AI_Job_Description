@@ -110,7 +110,7 @@ export function JobDescriptionParser() {
     >
       <Card className="bg-card/50 border-primary/20 shadow-lg backdrop-blur-md">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl text-primary">Parse Job Description</CardTitle>
+          <CardTitle className="font-headline text-2xl text-primary">Upload</CardTitle>
           <CardDescription>Upload a job description file (e.g., .txt, .md) to automatically parse and structure its content.</CardDescription>
         </CardHeader>
         <CardContent className="text-center">
