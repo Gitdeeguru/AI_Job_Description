@@ -132,7 +132,7 @@ export default function Home() {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="generate">Generate JD</TabsTrigger>
             <TabsTrigger value="analyze">Analyze JD</TabsTrigger>
-            <TabsTrigger value="ai">AI</TabsTrigger>
+            <TabsTrigger value="ai">Ask AI</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
           <TabsContent value="generate">
