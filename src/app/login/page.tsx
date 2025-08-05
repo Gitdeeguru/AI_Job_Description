@@ -8,24 +8,22 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { LoginForm, LoginFormData } from '@/components/login-form';
 import { SignupForm, SignupFormData } from '@/components/signup-form';
-import { useToast } from '@/hooks/use-toast';
 
 export default function AuthPage() {
   const [view, setView] = useState<'login' | 'signup'>('login');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { login, signup, user } = useAuth();
+  const { login, signup, user, loading } = useAuth();
   const router = useRouter();
-  const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
+    if (!loading && user) {
       router.push('/profile');
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
-  if (user) {
-    return null;
+  if (loading || user) {
+    return null; // Or a loading spinner
   }
 
   const handleLoginSubmit = async (data: LoginFormData) => {

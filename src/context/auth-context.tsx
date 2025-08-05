@@ -99,12 +99,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       const existingUser = users.find(u => u.email === email);
       if (existingUser) {
-        toast({
-          variant: "destructive",
-          title: "Signup Failed",
-          description: "An account with this email already exists.",
-        });
-        return false;
+         // Don't inform the user that the email already exists to prevent email enumeration.
+         // Just redirect to login as if signup was successful.
+         router.push('/login');
+         toast({
+          title: `Account Created!`,
+          description: "Your account has been created successfully. Please log in.",
+         });
+        return true;
       }
 
       const userData: User = { 
