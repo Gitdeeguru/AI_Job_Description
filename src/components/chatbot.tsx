@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ScrollArea } from './ui/scroll-area';
 import Textarea from 'react-textarea-autosize';
 import { chat } from '@/ai/flows/chatbot';
-import { ChatMessage } from '@/lib/types';
+import { type ChatMessage } from '@/lib/types';
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +41,7 @@ export function Chatbot() {
 
     try {
       const chatHistory = messages.map(msg => ({ role: msg.role, content: msg.content }));
-      const result = await chat({ history: chatHistory, message: input });
+      const result = await chat({ history: chatHistory, message: input, role: 'user' });
       const botMessage: ChatMessage = { role: 'model', content: result.response };
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {

@@ -7,24 +7,8 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
-
-export const ChatMessageSchema = z.object({
-  role: z.enum(['user', 'model']),
-  content: z.string(),
-});
-export type ChatMessage = z.infer<typeof ChatMessageSchema>;
-
-export const ChatInputSchema = z.object({
-  history: z.array(ChatMessageSchema).optional(),
-  message: z.string().describe("The user's current message."),
-});
-export type ChatInput = z.infer<typeof ChatInputSchema>;
-
-export const ChatOutputSchema = z.object({
-  response: z.string().describe("The chatbot's response."),
-});
-export type ChatOutput = z.infer<typeof ChatOutputSchema>;
+import { ChatInput, ChatOutput, ChatMessageSchema } from '@/lib/types';
+import { z } from 'genkit';
 
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
@@ -54,8 +38,13 @@ Keep your answers concise and easy to understand.`;
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
-    inputSchema: ChatInputSchema,
-    outputSchema: ChatOutputSchema,
+    inputSchema: ChatMessageSchema.extend({
+        history: z.array(ChatMessageSchema).optional(),
+        message: z.string().describe("The user's current message."),
+    }),
+    outputSchema: z.object({
+        response: z.string().describe("The chatbot's response."),
+    }),
   },
   async (input) => {
     const history = input.history ?? [];
