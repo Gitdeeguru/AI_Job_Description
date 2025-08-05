@@ -111,7 +111,7 @@ export function JobDescriptionParser() {
       <Card className="bg-card/50 border-primary/20 shadow-lg backdrop-blur-md">
         <CardHeader>
           <CardTitle className="font-headline text-2xl text-primary">Upload</CardTitle>
-          <CardDescription>Upload a job description file (e.g., .txt, .md) to automatically parse and structure its content.</CardDescription>
+          <CardDescription>Upload a job description file (e.g., pdf or doc) to automatically parse and structure its content.</CardDescription>
         </CardHeader>
         <CardContent className="text-center">
             <div 
@@ -166,7 +166,7 @@ export function JobDescriptionParser() {
             {!isLoading && !parsedData && (
                <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 <FileText className="h-16 w-16 mb-4" />
-                <p className="font-semibold">AI Generated JD appears here</p>
+                <p className="font-semibold">AI Generated JD appears here.</p>
                 <p className="text-sm">Upload a file to start.</p>
               </div>
             )}
