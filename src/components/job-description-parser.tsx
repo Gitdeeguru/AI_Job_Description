@@ -5,11 +5,11 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, UploadCloud, FileText } from 'lucide-react';
-import { parseJobDescriptionFile } from '@/app/actions';
+import { parseJobDescriptionFile } from '@/ai/flows/parse-job-description-file';
+import type { ParseJobDescriptionFileOutput } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
-import type { ParseJobDescriptionFileOutput } from '@/ai/flows/parse-job-description-file';
 
 // Mock data to simulate file content
 const mockFileContent = `

@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ScrollArea } from './ui/scroll-area';
 import Textarea from 'react-textarea-autosize';
-import { chat } from '@/app/actions';
+import { chat } from '@/ai/flows/chatbot';
 import { ChatMessage } from '@/lib/types';
 
 export function Chatbot() {
@@ -64,7 +64,7 @@ export function Chatbot() {
     <>
       <div className="fixed bottom-6 right-6 z-50">
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-          <Button onClick={() => setIsOpen(!isOpen)} size="icon" className="rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90" suppressHydrationWarning>
+          <Button onClick={() => setIsOpen(!isOpen)} size="icon" className="rounded-full w-14 h-14 shadow-lg bg-primary hover:bg-primary/90">
             <AnimatePresence>
                 {isOpen ? <X key="x"/> : <Bot key="bot" />}
             </AnimatePresence>

@@ -42,7 +42,7 @@ Location: {{{location}}}
 Key Skills: {{{keySkills}}}
 Gender Preference: {{{gender}}}
 
-Regenerated Job Description:`, 
+Regenerated Job Description:`,
 });
 
 const regenerateJobDescriptionFlow = ai.defineFlow(

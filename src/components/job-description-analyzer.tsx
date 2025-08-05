@@ -16,7 +16,8 @@ import {
 } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, Wand2 } from 'lucide-react';
-import { analyzeJobDescription } from '@/app/actions';
+import { analyzeJobDescription } from '@/ai/flows/analyze-job-description';
+import { type AnalyzeJobDescriptionOutput } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
@@ -26,13 +27,8 @@ const formSchema = z.object({
   jobDescription: z.string().min(50, { message: 'Job description must be at least 50 characters.' }),
 });
 
-type AnalysisResult = {
-  structuredContent: string;
-  recommendations: string;
-} | null;
-
 export function JobDescriptionAnalyzer() {
-  const [analysis, setAnalysis] = useState<AnalysisResult>(null);
+  const [analysis, setAnalysis] = useState<AnalyzeJobDescriptionOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 

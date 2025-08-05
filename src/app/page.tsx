@@ -10,8 +10,9 @@ import { JobDescriptionHistory, type JobHistoryItem } from '@/components/job-des
 import { JobDescriptionParser } from '@/components/job-description-parser';
 import { Chatbot } from '@/components/chatbot';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-description';
-import { generateJobDescription, regenerateJobDescription } from '@/app/actions';
+import { generateJobDescription } from '@/ai/flows/generate-job-description';
+import { regenerateJobDescription } from '@/ai/flows/regenerate-job-description';
+import { type GenerateJobDescriptionInput } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';

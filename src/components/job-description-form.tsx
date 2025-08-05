@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import type { GenerateJobDescriptionInput } from '@/ai/flows/generate-job-description';
+import type { GenerateJobDescriptionInput } from '@/app/actions';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 const formSchema = z.object({
@@ -72,7 +72,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                   <FormItem>
                     <FormLabel>Role Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Senior Software Engineer" {...field} suppressHydrationWarning />
+                      <Input placeholder="e.g., Senior Software Engineer" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -85,7 +85,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                   <FormItem>
                     <FormLabel>Company Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Acme Inc." {...field} suppressHydrationWarning />
+                      <Input placeholder="e.g., Acme Inc." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,7 +102,6 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                         placeholder="e.g., We are a fast-growing startup..."
                         className="resize-none"
                         {...field}
-                        suppressHydrationWarning
                       />
                     </FormControl>
                     <FormMessage />
@@ -116,7 +115,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                   <FormItem>
                     <FormLabel>Experience Level</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., 5-7 years" {...field} suppressHydrationWarning />
+                      <Input placeholder="e.g., 5-7 years" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -129,7 +128,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., San Francisco, CA or Remote" {...field} suppressHydrationWarning />
+                      <Input placeholder="e.g., San Francisco, CA or Remote" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -146,7 +145,6 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                         placeholder="e.g., React, TypeScript, Node.js, GraphQL, ..."
                         className="resize-none"
                         {...field}
-                        suppressHydrationWarning
                       />
                     </FormControl>
                     <FormMessage />
@@ -196,7 +194,7 @@ export function JobDescriptionForm({ onSubmit, isLoading }: JobDescriptionFormPr
                 )}
               />
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary/90" suppressHydrationWarning>
+                <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary/90">
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
