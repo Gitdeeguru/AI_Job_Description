@@ -132,7 +132,7 @@ export default function Home() {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="generate">Generate JD</TabsTrigger>
             <TabsTrigger value="analyze">Analyze JD</TabsTrigger>
-            <TabsTrigger value="parse">Parse Document</TabsTrigger>
+            <TabsTrigger value="ai">AI</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
           <TabsContent value="generate">
@@ -155,7 +155,7 @@ export default function Home() {
           <TabsContent value="analyze">
             <JobDescriptionAnalyzer />
           </TabsContent>
-          <TabsContent value="parse">
+          <TabsContent value="ai">
             <JobDescriptionParser />
           </TabsContent>
           <TabsContent value="history">
