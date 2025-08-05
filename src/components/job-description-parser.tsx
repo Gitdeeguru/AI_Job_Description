@@ -142,10 +142,10 @@ export function JobDescriptionParser() {
                 {isLoading ? (
                     <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Parsing...
+                    Generating...
                     </>
                 ) : (
-                    'Parse File'
+                    'Generate'
                 )}
                 </Button>
             </motion.div>
