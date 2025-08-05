@@ -166,7 +166,7 @@ export function JobDescriptionParser() {
             {!isLoading && !parsedData && (
                <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 <FileText className="h-16 w-16 mb-4" />
-                <p className="font-semibold">Your parsed content will appear here.</p>
+                <p className="font-semibold">AI Generated JD appears here</p>
                 <p className="text-sm">Upload a file to start.</p>
               </div>
             )}
